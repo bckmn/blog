@@ -21,6 +21,10 @@ export default async function BlogPage() {
 }
 
 function renderPosts(posts: Array<PostMetadata>) {
+  if (posts.length === 0) {
+    return <div>No posts available</div>;
+  }
+
   return posts.map((post) => (
     <article key={post.slug} className="border-b pb-6">
       <Link href={`/${post.slug}`}>
