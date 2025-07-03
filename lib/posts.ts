@@ -26,6 +26,8 @@ export type PostMetadata = {
   published: boolean;
 };
 
+export type Post = PostMetadata & { content: string };
+
 export async function getAllPosts(): Promise<
   Result<Array<PostMetadata>, string>
   > {
@@ -46,7 +48,7 @@ export async function getAllPosts(): Promise<
   });
 }
 
-function processPostFile(filename: string): Result<PostMetadata, string> {
+function processPostFile(filename: string): Result<Post, string> {
   const slug = filename.replace(".mdx", "");
   const fullpath = path.join(postsDirectory, filename);
 
@@ -57,10 +59,16 @@ function processPostFile(filename: string): Result<PostMetadata, string> {
         return {
           slug,
           ...parsedData,
+          content,
           readingTime: readingTime(content).text,
-        } satisfies PostMetadata;
+        } satisfies Post;
       }),
     );
+}
+
+export async function getPostBySlug(slug: string): Promise<Result<Post, string>> {
+  const filename = `${slug}.mdx`;
+  return processPostFile(filename);
 }
 
 function safeReadDir(path: string) {

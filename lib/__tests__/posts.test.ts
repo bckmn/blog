@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import { getAllPosts, PostMetadata } from "../posts";
+import { getAllPosts, getPostBySlug, Post } from "../posts";
 
 jest.mock("fs");
 const mockFs = fs as jest.Mocked<typeof fs> & {
@@ -221,7 +221,7 @@ tags: ["test"]
       consoleSpy.mockRestore();
     });
 
-    it("should return PostMetadata with correct structure", async () => {
+    it("should return Post with correct structure", async () => {
       mockFs.readdirSync.mockReturnValue(["post.mdx"]);
 
       mockFs.readFileSync.mockReturnValue(`---
@@ -241,13 +241,78 @@ published: true
         expect(post).toEqual({
           slug: "post",
           title: "Test Post",
+          content: "# Test Content",
           date: "2023-01-01",
           excerpt: "Test excerpt",
           tags: ["javascript", "testing"],
           published: true,
           readingTime: expect.any(String),
-        } satisfies PostMetadata);
+        } satisfies Post);
       }
+    });
+  });
+
+  describe("getPostBySlug", () => {
+    it("should return post when slug exists", async () => {
+      mockFs.readFileSync.mockReturnValue(`---
+title: "Test Post"
+date: "2023-01-01"
+excerpt: "Test excerpt"
+tags: ["javascript", "testing"]
+published: true
+---
+# Test Content`);
+
+      const result = await getPostBySlug("test-post");
+
+      expect(result.isOk()).toBe(true);
+      if (result.isOk()) {
+        expect(result.value).toEqual({
+          slug: "test-post",
+          title: "Test Post",
+          content: "# Test Content",
+          date: "2023-01-01",
+          excerpt: "Test excerpt",
+          tags: ["javascript", "testing"],
+          published: true,
+          readingTime: expect.any(String),
+        } satisfies Post);
+      }
+    });
+
+    it("should return error when file cannot be read", async () => {
+      mockFs.readFileSync.mockImplementation(() => {
+        throw new Error("File not found");
+      });
+
+      const result = await getPostBySlug("nonexistent");
+
+      expect(result.isErr()).toBe(true);
+      if (result.isErr()) {
+        expect(result.error).toContain("File not found");
+      }
+    });
+
+    it("should return error when frontmatter is invalid", async () => {
+      mockFs.readFileSync.mockReturnValue(`---
+title: 123
+date: "invalid-date"
+excerpt: null
+tags: "not-an-array"
+---
+# Invalid content`);
+
+      const result = await getPostBySlug("invalid-post");
+
+      expect(result.isErr()).toBe(true);
+    });
+
+    it("should handle missing frontmatter", async () => {
+      mockFs.readFileSync.mockReturnValue(`# Just content without frontmatter`);
+
+      const result = await getPostBySlug("no-frontmatter");
+
+      expect(result.isErr()).toBe(true);
     });
   });
 });
