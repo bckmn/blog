@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Blog
+
+A modern, type-safe blog built with Next.js and TypeScript that reads MDX files from a content directory.
+
+## Features
+
+- 📝 MDX-based blog posts with frontmatter support
+- 🎨 Tailwind CSS styling
+- 📊 Reading time estimation
+- 🏷️ Tag support
+- 🔒 Type-safe with Zod validation
+- 🚀 Static generation for optimal performance
+- ✅ Comprehensive Jest test coverage
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+```bash
+npm install
+```
+
+### Development
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the blog.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Creating Posts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create MDX files in the `content/posts/` directory with the following frontmatter:
 
-## Learn More
+```yaml
+---
+title: "Your Post Title"
+date: "2024-01-01"
+excerpt: "A brief description of your post"
+tags: ["tag1", "tag2"]
+published: true
+---
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Available Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run test` - Run Jest tests
+- `npm run test:watch` - Run tests in watch mode
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+├── app/
+│   ├── [slug]/          # Dynamic blog post pages
+│   ├── layout.tsx       # Root layout
+│   └── page.tsx         # Home page (blog listing)
+├── lib/
+│   └── posts.ts         # Post processing utilities
+├── content/
+│   └── posts/           # MDX blog posts
+└── public/              # Static assets
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Framework**: Next.js 15 with App Router
+- **Styling**: Tailwind CSS
+- **Content**: MDX with gray-matter
+- **Validation**: Zod
+- **Error Handling**: neverthrow
+- **Testing**: Jest + React Testing Library
+- **TypeScript**: Full type safety
